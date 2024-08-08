@@ -1,26 +1,12 @@
 from django.db import models
+from django.db.models.fields import DateField
+from datetime import date
+from django.conf import settings
 
 # Create your models here.
-# from django.utils import timezone
-
-
-
-# class Book(models.Model):
-
-#   title = models.CharField(max_length=200)
-
-#   author = models.CharField(max_length=100)
-
-#   publish_date = models.DateField(default=timezone.now)
-
-#   isbn = models.CharField(max_length=13, unique=True)
-
-#   page_count = models.IntegerField()
-
-#   description = models.TextField(blank=True)
-
-
-
-#   def __str__(self):
-
-#     return self.title
+class Message(models.Model) :
+    text = models.CharField(max_length=500)
+    created_at = DateField(default=date.today)
+    # chat = Chat Klasse verküpfen
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='author_message_set')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='receiver_message_set')
