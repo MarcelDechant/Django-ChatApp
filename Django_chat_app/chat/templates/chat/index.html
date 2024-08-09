@@ -4,8 +4,11 @@
 
 
 <style>
-    .page-content{
+    .page-content {
         padding: 100px 100px;
+    }
+    .color-gray {
+        color: rgba(0,0,0,0.4)
     }
 </style>
 <!-- Always shows a header, even in smaller screens. -->
@@ -37,9 +40,18 @@
     <main class="mdl-layout__content">
         <div class="page-content">
 
-            <form action="#">
+
+            {% for message in messages %}
+            <div>
+                <span class="color-gray">[{{message.created_at}}]</span> {{message.author}} : <i> {{ message.text }} </i>
+            </div>
+            {% endfor %}
+
+
+            <form action="/chat/" method="post">
+                {% csrf_token %}
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input class="mdl-textfield__input" type="text" id="sample3">
+                    <input class="mdl-textfield__input" name="textmessage" id="sample3">
                     <label class="mdl-textfield__label" for="sample3">Text...</label>
                 </div>
 
