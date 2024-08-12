@@ -7,8 +7,9 @@
     .page-content {
         padding: 100px 100px;
     }
+
     .color-gray {
-        color: rgba(0,0,0,0.4)
+        color: rgba(0, 0, 0, 0.4)
     }
 </style>
 <!-- Always shows a header, even in smaller screens. -->
@@ -16,7 +17,16 @@
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
             <!-- Title -->
-            <span class="mdl-layout-title">Welcome, {{request.user.first_name}}!</span>
+            <span class="mdl-layout-title">
+                {% if request.user.is_authenticated %}
+                    Welcome, {{ request.user.first_name }}!
+                {% else %}
+                    Welcome! Please log in!
+                {% endif %}
+            </span>
+            
+               
+
             <!-- Add spacer, to align navigation to the right -->
             <div class="mdl-layout-spacer"></div>
             <!-- Navigation. We hide it in small screens. -->
@@ -40,10 +50,12 @@
     <main class="mdl-layout__content">
         <div class="page-content">
 
+            {% if request.user.is_authenticated %}
 
             {% for message in messages %}
             <div>
-                <span class="color-gray">[{{message.created_at}}]</span> {{message.author}} : <i> {{ message.text }} </i>
+                <span class="color-gray">[{{message.created_at}}]</span> {{message.author}} : <i> {{ message.text }}
+                </i>
             </div>
             {% endfor %}
 
@@ -61,8 +73,13 @@
                 </button>
             </form>
 
+            {%else%}
+            <h1>Not logged in.</h1>
+            <p>You are not logged in. Please log in.<br>
+                Bitte klick <a href="/login/">hier</a>.
 
-
+            </p>
+            {% endif %}
 
 
         </div>
