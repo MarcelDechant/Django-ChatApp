@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Chat, Message
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.models import User
+from django.contrib import messages
 # Create your views here.
 
 
@@ -23,7 +24,7 @@ def index(request):
 
 
 def login_view(request):
-    redirect = request.GET.get("next")
+    redirect_url = request.GET.get("next")
     if request.method == "POST":
         user = authenticate(
             username=request.POST.get("username"), password=request.POST.get("password")
@@ -31,7 +32,28 @@ def login_view(request):
 
         if user:
             login(request, user)
-            return HttpResponseRedirect(request.POST.get("redirect"))
+            return redirect(redirect_url or 'index')  # Weiterleitung zum nächsten Ziel oder zur Chat-Seite
         else:
-            return render(request, "auth/login.html", {"wrongPassword": True, 'redirect':redirect})
-    return render(request, "auth/login.html", {'redirect':redirect})
+            return render(request, "auth/login.html", {"wrongPassword": True, 'redirect': redirect_url})
+
+    return render(request, "auth/login.html", {'redirect': redirect_url})
+
+def registration_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        # Überprüfen, ob die E-Mail-Adresse bereits verwendet wird
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Diese E-Mail-Adresse wird bereits verwendet.")
+            return render(request, "auth/registration.html")
+
+        # Neuen Benutzer erstellen
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.save()
+
+        messages.success(request, "Registrierung erfolgreich! Sie können sich jetzt anmelden.")
+        return redirect('login_view')  # Weiterleitung zur Login-Seite nach erfolgreicher Registrierung
+
+    return render(request, "auth/registration.html")

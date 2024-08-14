@@ -1,22 +1,37 @@
 {% extends "base.html" %}
 {% block content%}
-
-<h1>Login</h1>
-
-
-{% if wrongPassword %}
-
-<p>Benutzername oder Password ist Falsch! </p>
-
-{% endif %}
+<div class="login_page">
+    <h1>Login</h1>
 
 
-<form method="POST" action="/login/">
-    {% csrf_token %}
-    <input type="hidden" name="redirect" value="{{redirect}}">
-    <div><input name="username" type="text"></div>
-    <div><input name="password" type="password"></div>
-    <div><button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"></div>
+    {% if wrongPassword %}
+
+    <p>Benutzername oder Password ist Falsch! </p>
+
+    {% endif %}
+
+
+    <form class="login_form" method="POST" action="/login/">
+        {% csrf_token %}
+        <input type="hidden" name="redirect" value="{{redirect}}">
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" name="username" type="text">
+            <label class="mdl-textfield__label" for="sample3">Username...</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" name="password" type="password">
+            <label class="mdl-textfield__label" for="sample3">Password...</label>
+        </div>
+        <div><p>If you are not registered yet, please click <a href="/registration/">hier</a>.
+        
+        </p></div>
+        <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Login</button>
+        </div>
+</div>
 
 </form>
+</div>
 {% endblock %}

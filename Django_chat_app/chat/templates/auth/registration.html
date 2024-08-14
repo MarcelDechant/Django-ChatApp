@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="registration_page">
+    <h1>Registrierung</h1>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form class="registration_form" method="POST" action="/registration/">
+        {% csrf_token %}
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" name="username" type="text" required>
+            <label class="mdl-textfield__label" for="username">Benutzername...</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" name="email" type="email" required>
+            <label class="mdl-textfield__label" for="email">E-Mail...</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" name="password" type="password" required>
+            <label class="mdl-textfield__label" for="password">Passwort...</label>
+        </div>
+
+        <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                Registrieren
+            </button>
+        </div>
+
+        <p class="color-gray">Bereits registriert? <a href="/login/">Hier einloggen</a>.</p>
+    </form>
+</div>
+{% endblock %}
