@@ -1,37 +1,80 @@
 {% extends "base.html" %}
 {% block content%}
-<div class="login_page">
-    <h1>Login</h1>
-
-
-    {% if wrongPassword %}
-
-    <p>Benutzername oder Password ist Falsch! </p>
-
-    {% endif %}
-
-
-    <form class="login_form" method="POST" action="/login/">
-        {% csrf_token %}
-        <input type="hidden" name="redirect" value="{{redirect}}">
-
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" name="username" type="text">
-            <label class="mdl-textfield__label" for="sample3">Username...</label>
-        </div>
-
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" name="password" type="password">
-            <label class="mdl-textfield__label" for="sample3">Password...</label>
-        </div>
-        <div><p>If you are not registered yet, please click <a href="/registration/">hier</a>.
+<script>
+    
+  
+    async function login() {
+      disableFields();
+      let fd = new FormData();
+      let token = '{{ csrf_token }}';
+      fd.append('username', usernamefield.value);
+      fd.append('password', passwordfield.value);
+      fd.append('csrfmiddlewaretoken', token);
+  
+      try {
         
-        </p></div>
-        <div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Login</button>
+        let response = await fetch('', {
+          method: 'POST',
+          body: fd
+        });
+        let data = await response.json();
+        let json = JSON.parse(data);
+  
+        if(json.fields.username == usernamefield.value) {
+          window.location.href = "http://127.0.0.1:8000/chat/";
+          
+          console.log('Login successfull!');   
+        }
+        enableFields();
+          
+      } catch(error) {
+        console.log('An error occured', error);
+        loginNotSuccessfull.classList.add('show');
+       
+        enableFields();
+      }
+    }
+  
+    function disableFields() {
+      document.getElementById('usernamefield').disabled = true;
+      document.getElementById('passwordfield').disabled = true;
+      document.getElementById('loginButton').disabled = true;
+    }
+  
+    function enableFields() {
+      document.getElementById('usernamefield').disabled = false;
+      document.getElementById('passwordfield').disabled = false;
+      document.getElementById('loginButton').disabled = false;  
+  }
+  </script>
+  
+  <div class="background">
+    <div class="login">
+      <h2>Login</h2>
+      <p id="loginNotSuccessfull" class="notShow">Username or password is incorrect!</p>
+      <form onsubmit="login(); return false;" class="loginForm">
+  
+        {% comment %} {% csrf_token %} {% endcomment %}             
+        {% comment %} <input type="hidden" name="redirect" value="{{ redirect }}"> {% endcomment %}
+  
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" name="username" type="text" id="usernamefield" />
+          <label class="mdl-textfield__label" for="sample3">Username</label>
         </div>
-</div>
-
-</form>
-</div>
+  
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" name="password" type="password" id="passwordfield" />
+            <label class="mdl-textfield__label" for="sample3">Password</label>
+        </div>
+    
+        
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="loginButton">
+          Login
+        </button>
+      </form>
+    </div>
+  
+    <div>Hi there, have you already registered? <a href="/registration/">Sign up here!</a></div>
+  
+  </div>
 {% endblock %}

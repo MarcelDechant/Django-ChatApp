@@ -3,10 +3,9 @@ from .models import Chat, Message
 
 
 class MessageAdmin(admin.ModelAdmin):
-    fields = ("chat", "text", "created_at", "author", "receiver")
-    list_display = ("created_at", "author", "text", "receiver")
-    search_fields = ("text",)
-    # actions = ["delete_selected"]
+    fields = ('chat', 'text', 'created_at', 'author', 'receiver') #Felder die den Messages angezeigt werden sollen
+    list_display = ('chat', 'text', 'created_at', 'author', 'receiver') # Spaltenüberschrift
+    search_fields = ('text',) # Fügt ein Textfeld hinzug und filtert Nachrichten mit dem entsprechenden Text
 
 
 # Register your models here.

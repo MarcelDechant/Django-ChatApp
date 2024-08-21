@@ -1,41 +1,100 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="registration_page">
-    <h1>Registrierung</h1>
-
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <form class="registration_form" method="POST" action="/registration/">
-        {% csrf_token %}
-
+<script>
+    
+  
+    async function signUp() {
+      hideInfoText();
+      disableFields();
+      let fd = new FormData();
+      let token = '{{ csrf_token }}';
+      fd.append('username', usernamefield.value);
+      fd.append('password', passwordfield.value);
+      fd.append('csrfmiddlewaretoken', token);
+  
+      if(passwordfield.value == passwordConfirmfield.value) {
+        try {
+         
+          let response = await fetch('', {
+            method: 'POST',
+            body: fd
+          });
+          let data = await response.json();
+          let json = JSON.parse(data);
+          userCreated.classList.add('show');
+          setTimeout(() => {
+            window.location.href = "http://127.0.0.1:8000/chat/";
+            
+            userCreated.classList.remove('show');
+            enableFields();
+          }, 3000);
+          console.log('User successfully created!');   
+        } catch(error) {
+            userAlreadyExists.classList.add('show');
+           
+            enableFields();
+        }
+      } else {
+          pwIdentical.classList.add('show');
+          passwordfield.value = "";
+          passwordConfirmfield.value = "";
+          enableFields();
+      }
+    }
+  
+    function hideInfoText() {
+      pwIdentical.classList.remove('show');
+      userAlreadyExists.classList.remove('show');
+      userCreated.classList.remove('show');
+    }
+  
+    function disableFields() {
+      document.getElementById('usernamefield').disabled = true;
+      document.getElementById('passwordfield').disabled = true;
+      document.getElementById('passwordConfirmfield').disabled = true;
+      document.getElementById('signUpButton').disabled = true;
+    }
+  
+    function enableFields() {
+      document.getElementById('usernamefield').disabled = false;
+      document.getElementById('passwordfield').disabled = false;
+      document.getElementById('passwordConfirmfield').disabled = false;
+      document.getElementById('signUpButton').disabled = false;      
+    }
+  
+  </script>
+  
+  <div class="background">
+    <div class="login">
+      <h2>Sing up</h2>
+      
+      <p id="userAlreadyExists" class="notShow">User already exists!</p>
+      <p id="pwIdentical" class="notShow">Passwords are not identical!</p>
+      <p id="userCreated" class="notShow" style="color: rgb(0, 128, 0); font-size: 20px">USER SUCCESSFULLY CREATED</p>
+      <form onsubmit="signUp(); return false;" class="signUpForm">
+  
+        {% comment %}      {% csrf_token %}         {% endcomment %}              
+        {% comment %} <input type="hidden" name="redirect" value="{{ redirect }}"> {% endcomment %}
+          
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" name="username" type="text" required>
-            <label class="mdl-textfield__label" for="username">Benutzername...</label>
+          <input class="mdl-textfield__input" name="username" type="text" id="usernamefield"/>
+          <label class="mdl-textfield__label" for="sample3">Username</label>
         </div>
-
+  
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" name="email" type="email" required>
-            <label class="mdl-textfield__label" for="email">E-Mail...</label>
+            <input class="mdl-textfield__input" name="password" type="password" id="passwordfield"/>
+            <label class="mdl-textfield__label" for="sample3">Password</label>
         </div>
-
+  
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" name="password" type="password" required>
-            <label class="mdl-textfield__label" for="password">Passwort...</label>
+          <input class="mdl-textfield__input" name="passwordConfirm" type="password" id="passwordConfirmfield"/>
+          <label class="mdl-textfield__label" for="sample3">Repeat password</label>
         </div>
-
-        <div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                Registrieren
-            </button>
-        </div>
-
-        <p class="color-gray">Bereits registriert? <a href="/login/">Hier einloggen</a>.</p>
-    </form>
-</div>
+    
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="signUpButton">
+          Login
+        </button>
+      </form>  
+    </div>
+  </div>
 {% endblock %}
